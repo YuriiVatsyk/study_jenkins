@@ -1,0 +1,23 @@
+pipeline {
+    agent any
+    
+    tools {
+        maven 'petclinic-Maven'
+    }
+
+    stages {
+        stage('Build') {
+            steps {
+                git branch: 'main', url: 'https://github.com/spring-projects/spring-petclinic.git'
+                sh 'mvn package'
+            }
+           post { 
+               success {
+                   googleStorageUpload (bucket: 'gs://gcp-2021-3-artifacts-vatsyk1/pipeline-job', credentialsId: 'gcp-2021-3-phase2-vatsyk1', pattern: 'target/*.jar')
+                }
+            }
+                 
+        }
+    }
+}
+ 
